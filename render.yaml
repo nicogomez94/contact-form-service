@@ -3,7 +3,7 @@ services:
     name: contact-form-service
     runtime: node
     plan: free
-    rootDir: contact-form-service
+    rootDir: .
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /health
@@ -12,8 +12,8 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: CONTACT_TO_EMAIL
-        sync: false
+        value: hola@zigodev.com.ar
       - key: CONTACT_FROM_EMAIL
-        sync: false
+        value: Contacto Zigodev <contacto@zigodev.com.ar>
       - key: ALLOWED_ORIGINS
-        sync: false
+        value: https://zigodev.com.ar,https://www.zigodev.com.ar,http://localhost:5173
