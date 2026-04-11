@@ -12,8 +12,10 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: CONTACT_TO_EMAIL
-        value: hola@zigodev.com.ar
+        value: default@zigodev.com.ar
+      - key: CONTACT_TO_EMAILS_JSON
+        value: '{"zigodev.com.ar":"hola@zigodev.com.ar","coordinacionhockey.com.ar":"contacto@coordinacionhockey.com.ar"}'
       - key: CONTACT_FROM_EMAIL
         value: Contacto Zigodev <contacto@zigodev.com.ar>
       - key: ALLOWED_ORIGINS
-        value: https://zigodev.com.ar,https://www.zigodev.com.ar,http://localhost:5173
+        value: "*"

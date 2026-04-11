@@ -27,6 +27,54 @@ function normalizePayload(body) {
 		};
 }
 
+function normalizeSite(site) {
+		if (!site) {
+				return "";
+		}
+
+		let value = site.toLowerCase().trim();
+		value = value.replace(/^https?:\/\//, "");
+		value = value.split("/")[0].trim();
+		value = value.replace(/^www\./, "");
+
+		return value;
+}
+
+function getSiteToEmailMap() {
+		const raw = cleanString(process.env.CONTACT_TO_EMAILS_JSON);
+
+		if (!raw) {
+				return {};
+		}
+
+		try {
+				const parsed = JSON.parse(raw);
+				const result = {};
+
+				Object.entries(parsed).forEach(([site, email]) => {
+						const siteKey = normalizeSite(site);
+						const emailValue = cleanString(email);
+
+						if (siteKey && emailValue) {
+								result[siteKey] = emailValue;
+						}
+				});
+
+				return result;
+		} catch (error) {
+				console.error("CONTACT_TO_EMAILS_JSON invalido:", error);
+				return {};
+		}
+}
+
+function resolveToEmail(site) {
+		const map = getSiteToEmailMap();
+		const normalizedSite = normalizeSite(site);
+		const bySite = normalizedSite ? map[normalizedSite] : "";
+
+		return cleanString(bySite || process.env.CONTACT_TO_EMAIL);
+}
+
 async function sendContact(req, res) {
 		try {
 				const { name, email, message, site, company } = normalizePayload(req.body || {});
@@ -56,10 +104,19 @@ async function sendContact(req, res) {
 						return res.status(200).json({ success: true });
 				}
 
-				if (!process.env.RESEND_API_KEY || !process.env.CONTACT_TO_EMAIL || !process.env.CONTACT_FROM_EMAIL) {
+				if (!process.env.RESEND_API_KEY || !process.env.CONTACT_FROM_EMAIL) {
 						return res.status(500).json({
 								success: false,
 								error: "Faltan variables de entorno requeridas"
+						});
+				}
+
+				const toEmail = resolveToEmail(site);
+
+				if (!toEmail) {
+						return res.status(500).json({
+								success: false,
+								error: "No hay email destino configurado para este sitio"
 						});
 				}
 
@@ -75,7 +132,7 @@ async function sendContact(req, res) {
 
 				await getResendClient().emails.send({
 						from: process.env.CONTACT_FROM_EMAIL,
-						to: [process.env.CONTACT_TO_EMAIL],
+						to: [toEmail],
 						subject,
 						text,
 						replyTo: email

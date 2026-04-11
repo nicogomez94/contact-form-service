@@ -13,7 +13,8 @@ Copiar `.env.example` a `.env` y completar:
 
 - `PORT`
 - `RESEND_API_KEY`
-- `CONTACT_TO_EMAIL`
+- `CONTACT_TO_EMAIL` (fallback/default)
+- `CONTACT_TO_EMAILS_JSON` (mapa por sitio)
 - `CONTACT_FROM_EMAIL`
 - `ALLOWED_ORIGINS` (lista separada por comas)
 
@@ -76,4 +77,6 @@ fetch("https://tu-servicio.onrender.com/api/contact", {
 ## Notas
 
 - Si `company` llega con valor, responde `{ "success": true }` y no envia email (honeypot).
+- Si `site` existe en `CONTACT_TO_EMAILS_JSON`, envia al email de ese sitio.
+- Si `site` no existe en el mapa, usa `CONTACT_TO_EMAIL` como fallback.
 - Siempre responde JSON.
