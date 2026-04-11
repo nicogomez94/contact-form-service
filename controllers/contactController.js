@@ -21,6 +21,7 @@ function normalizePayload(body) {
 		return {
 				name: cleanString(body.name),
 				email: cleanString(body.email),
+				to: cleanString(body.to),
 				message: cleanString(body.message),
 				site: cleanString(body.site),
 				company: cleanString(body.company)
@@ -77,7 +78,7 @@ function resolveToEmail(site) {
 
 async function sendContact(req, res) {
 		try {
-				const { name, email, message, site, company } = normalizePayload(req.body || {});
+				const { name, email, to, message, site, company } = normalizePayload(req.body || {});
 
 				if (!name || !email || !message) {
 						return res.status(400).json({
@@ -111,12 +112,12 @@ async function sendContact(req, res) {
 						});
 				}
 
-				const toEmail = resolveToEmail(site);
+				const toEmail = cleanString(to) || resolveToEmail(site);
 
-				if (!toEmail) {
+				if (!toEmail || !EMAIL_REGEX.test(toEmail)) {
 						return res.status(500).json({
 								success: false,
-								error: "No hay email destino configurado para este sitio"
+								error: "No hay email destino valido"
 						});
 				}
 

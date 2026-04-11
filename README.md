@@ -38,6 +38,7 @@ Servidor en `http://localhost:PORT`.
 {
 		"name": "Juan Perez",
 		"email": "juan@mail.com",
+		"to": "contacto@miweb.com",
 		"message": "Hola, quiero mas informacion.",
 		"site": "miweb.com",
 		"company": ""
@@ -55,6 +56,7 @@ fetch("https://tu-servicio.onrender.com/api/contact", {
 		body: JSON.stringify({
 				name: "Juan Perez",
 				email: "juan@mail.com",
+				to: "contacto@miweb.com",
 				message: "Hola, quiero mas informacion.",
 				site: "miweb.com",
 				company: ""
@@ -77,6 +79,7 @@ fetch("https://tu-servicio.onrender.com/api/contact", {
 ## Notas
 
 - Si `company` llega con valor, responde `{ "success": true }` y no envia email (honeypot).
+- Si `to` viene en el request, usa ese destinatario.
 - Si `site` existe en `CONTACT_TO_EMAILS_JSON`, envia al email de ese sitio.
 - Si `site` no existe en el mapa, usa `CONTACT_TO_EMAIL` como fallback.
 - Siempre responde JSON.
